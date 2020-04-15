@@ -11,7 +11,7 @@ int leituraProcN(int* y, int* x, char* s_n){
 	char command[25]; ///proc/[pid]/cmdline
 	char s_pid[5], s_s[2], s_pr[2], s_time[15], s_cpu[25];
 	double cpu; 
-	/*int user;*/
+	char* usuario;
 
 	//---------- PID
 	//le pid
@@ -24,10 +24,10 @@ int leituraProcN(int* y, int* x, char* s_n){
 
 	//---------- USUARIO
 	//le USUARIO
-	//pid = lerPid(s_proc_pid);
+	usuario = lerUsuario(s_n);
 	//sprintf(s_pid, "%d", pid);
 	//mostra prioridade + direciona apontador do ncurses
-	//printw(s_pid);
+	printw(usuario);
 	*x += 10;
 	move(*y, *x);
 
@@ -82,7 +82,7 @@ int mostraProcessos(int* y, int* x){
 	FILE* proc_file;
 	char proc_adr[20], s_n[4];
 
-
+	
 	while(n < 10000){
 		sprintf(s_n, "%d", n);
 		strcpy(proc_adr,"/proc/");

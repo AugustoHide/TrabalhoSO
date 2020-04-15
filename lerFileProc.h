@@ -6,3 +6,4 @@ void lerCommand(char* proc_pid, char* comando);
 long unsigned f_t_antes(char* proc_adr);
 long unsigned f_tot_antes(char* proc_adr);
 double lerCpu(char* proc_pid);
+char* lerUsuario(char* proc_pid);
