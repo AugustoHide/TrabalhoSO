@@ -1,7 +1,10 @@
 #include<curses.h>
 #include<stdio.h>
 #include<string.h>
+#include"processarDadosProc.h"
 #include"lerFileProc.h"
+
+#define max_proc 10000
 
 int leituraProcN(int* y, int* x, char* s_n){
 	//Variáveis dos dados dos processos
@@ -136,49 +139,46 @@ int main(){
 	printw("COMANDO");
 	move(1,75);
 
-	/* -------------------- EXEMPLO ALEATÓRIO --------------------*/
-	move(2,0);
-	//pid
-	printw("1");
-	move(2,5);
-	//uusuário
-	printw("root");
-	move(2,15);
-	//prioridade
-	printw("20");
-	move(2,25);
-	//estado
-	printw(" S");
-	move(2,45);
-	//%cpu
-	printw("6.8");
-	move(2,55);
-	//tempo
-	printw("20395");
-	move(2,65);
-	//comando
-	printw("systemd");
-	move(2,75);
 
-	/* -------------------- EXEMPLO INICIAL do /proc --------------------*/
-	move(3,0);
+	/* -------------------- VERSÃO INICIAL do /proc --------------------*/
+	move(2,0);
 	//Variáveis de ncurses
-	int y = 3,
+	int y = 2,
 		x = 0;
 	
-
-	//1. fazer leitura de arquivos de /proc
-	//2. chamar função display para todos os arquivos dentro de proc 
-	//		que representam um processo
-	/* -------------------- EXEMPLO INICIAL do /proc --------------------*/
-	//1. função que faz a repetição de
-		//conferencia de pid
-		//se n == pid -> iteração de leitura
 	mostraProcessos(&y, &x);
+
 	getch();
 	//dealocates memory ends ncurses
 	endwin();
+
+	double cpuId[max_proc][2];
+	int n_proc;
+	ArmazenaCpuId(cpuId);
 	
+	int n = 0;
+	while(n < max_proc){
+		if (cpuId[n][1] == 0.0){
+			n++;
+			continue;
+		}
+		//printf("pid%d:\t%lf\n", n, cpuId[n][0]);
+		n_proc = n;	
+		n++;
+	}
+
+	ordenaCpuId(cpuId, n_proc);
+
+	n = 0;
+	while(n < max_proc){
+		if (cpuId[n][1] == 0.0){
+			n++;
+			continue;
+		}
+		//printf("pid%d:\t%lf\n", n, cpuId[n][0]);
+		n_proc = n;	
+		n++;
+	}
 
 	return 0;
 }

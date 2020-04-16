@@ -86,15 +86,20 @@ long unsigned f_tot_antes(char* proc_adr){
 	}else{
 		int i = 0;
 		tot_antes = 0;
-		while(i < 11){
-			if (i != 0){
+		while(i < 10){
+			if (i == 1){
+				fscanf(proc_file, "%lu", &times_cpu[i]);
+			}else if (i == 3){
 				fscanf(proc_file, "%lu", &times_cpu[i]);
 			}else{
 				fscanf(proc_file, "%s", string);
+				times_cpu[i] = 0;
 			}
-			i++;
 			tot_antes += times_cpu[i];
+			//printf("\t%lu\t%lu\n", tot_antes, times_cpu[i]);
+			i++;
 		}
+		//printf("\t%lu\n", tot_antes);
 		fclose(proc_file);
 	}
 	return tot_antes;
@@ -103,55 +108,34 @@ long unsigned f_tot_antes(char* proc_adr){
 double lerCpu(char* proc_pid){
 
 	double time;
-	unsigned long int  t_antes, t_depois;
-	long unsigned int tot_antes, tot_depois;
+	unsigned long int  t_proc;
+	long unsigned int total;
 	char proc_adr[20];
 
-	/* ---------- Determinar t_antes ----------*/
+	/* ---------- Determinar t_proc ----------*/
 	// --------- Concatenação de endereço
 	strcpy(proc_adr,"/proc/");
 	strcat(proc_adr, proc_pid);
 	strcat(proc_adr, "/stat");
 	//printf("%s\n", proc_adr);
 
-	t_antes = f_t_antes(proc_adr);
+	t_proc = f_t_antes(proc_adr);
 
-	/* ---------- Determinar tot_antes ----------*/
+	/* ---------- Determinar total ----------*/
 	// --------- Concatenação de endereço
 	strcpy(proc_adr,"/proc/");
 	strcat(proc_adr, "stat");
 	//printf("%s\n", proc_adr);
 
-	tot_antes = f_tot_antes(proc_adr);
+	total = f_tot_antes(proc_adr);
 
-	/* ---------- pausa ----------*/
-	sleep(0.1);
 
-	/* ---------- Determinar t_antes ----------*/
-	// --------- Concatenação de endereço
-	strcpy(proc_adr,"/proc/");
-	strcat(proc_adr, proc_pid);
-	strcat(proc_adr, "/stat");
-	//printf("%s\n", proc_adr);
+	time = t_proc/total;
 
-	t_depois = f_t_antes(proc_adr);
-
-	/* ---------- Determinar tot_antes ----------*/
-	// --------- Concatenação de endereço
-	strcpy(proc_adr,"/proc/");
-	strcat(proc_adr, "stat");
-	//printf("%s\n", proc_adr);
-
-	tot_depois = f_tot_antes(proc_adr);
-
-	time = (t_depois - t_antes)/(tot_depois - tot_antes);
-
-	/*printf("%lu\n", t_antes);
-	printf("%lu\n", t_depois);
-	printf("%lu\n", tot_antes);
-	printf("%lu\n", tot_depois);
-	printf("%lf\n", time);*/
-	return time;
+	/*printf("\tt_proc: %lu\n", t_proc);
+	printf("\ttotal: %lu\n", total);
+	printf("%lf\n", time*100);*/
+	return time*100;
 }
 
 int lerPid(char* proc_pid){
@@ -265,7 +249,7 @@ long int lerTime(char* proc_pid){
 		//printf("time: %ld\n", time);	
 	}
 	fclose(proc_file);
-	return time;
+	return time/1000;
 }
 /* ------------- command ------------- */
 void lerCommand(char* proc_pid, char* comando){
@@ -288,90 +272,5 @@ void lerCommand(char* proc_pid, char* comando){
 		fclose(proc_file);
 	}
 }
-/*
-int maidn(){
-	char string[20];
 
-	
-	long int pr; //ok
-	char s; //ok
-	long int time; // /proc/[pid]/timerslack_ns 
-	char command[100]; ///proc/[pid]/cmdline
-	
-	long double cpu; 
-	int user;
-
-	FILE* proc_file;
-	int w = 0;
-	while(1){
-		if (w%5000000 != 0){
-			if (w == 5000000){
-				w = 0;
-			}else{
-				w++;
-			}
-			continue;
-		}else{
-			------------- pid, pr, s ------------- 			
-			proc_file = fopen("/proc/1/stat", "r");
-
-			if (proc_file == NULL){
-				printf("Falha ao tentar abrir o proc_file\n");
-			}else{
-				int i = 1;
-				while(!feof(proc_file) && i < 53){
-					if(i == 1){
-						fscanf(proc_file, "%d", &pid);
-						printf("pid: %d\n", pid);
-					}else if(i == 3){
-						fscanf(proc_file, "%s", &s);
-						printf("status: %s\n", &s);
-					}else if(i == 18){
-						fscanf(proc_file, "%ld", &pr);
-						printf("priority: %ld\n", pr);
-					}else if(i == 5){
-						fscanf(proc_file, "%d", &user);
-						printf("GROUPID/USERS??: %d\n", user);
-					}else{
-						fscanf(proc_file, "%s", string);
-					}
-					i++;
-				}
-				printf("proc_file: pid, s, pr - aberto com sucesso!\n");
-			}
-			fclose(proc_file);
-			printf("\n\n\n");
-
-
-		 ------------- time ------------- 
-			proc_file = fopen("/proc/1/timerslack_ns", "r");
-
-			if(proc_file == NULL){
-				printf("Falha ao tentar abrir o proc_file\n");
-			}else{
-				fscanf(proc_file, "%ld", &time);
-				printf("time: %ld\n", time);	
-			}
-			fclose(proc_file);
-			printf("\n\n\n");*/
-			/* ------------- command ------------- */
-/*			proc_file = fopen("/proc/1/cmdline", "r");
-
-			if(proc_file == NULL){
-				printf("Falha ao tentar abrir o proc_file\n");
-			}else{
-				fscanf(proc_file, "%s", command);
-				printf("command: %s\n", command);
-					
-			}
-			fclose(proc_file);
-			printf("\n\n\n");
-		}
-		w++;
-	}
-
-
-	return 0;
-}
-*/
 
