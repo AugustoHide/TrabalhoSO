@@ -100,8 +100,9 @@ long unsigned f_tot_antes(char* proc_adr){
 			i++;
 		}
 		//printf("\t%lu\n", tot_antes);
-		fclose(proc_file);
+		
 	}
+	fclose(proc_file);
 	return tot_antes;
 }
 
@@ -127,7 +128,7 @@ double lerCpu(char* proc_pid){
 	strcat(proc_adr, "stat");
 	//printf("%s\n", proc_adr);
 
-	total = f_tot_antes(proc_adr);
+	total = f_tot_antes(proc_adr)/100;
 
 
 	time = t_proc/total;
@@ -135,7 +136,7 @@ double lerCpu(char* proc_pid){
 	/*printf("\tt_proc: %lu\n", t_proc);
 	printf("\ttotal: %lu\n", total);
 	printf("%lf\n", time*100);*/
-	return time*100;
+	return time;
 }
 
 int lerPid(char* proc_pid){
@@ -153,6 +154,7 @@ int lerPid(char* proc_pid){
 	proc_file = fopen(proc_adr, "r");
 
 	if (proc_file == NULL){
+		printf("%s\n", strerror(ferror(proc_file)));
 		printf("Falha ao tentar abrir o /proc/%s/stat - pid\n", proc_pid);
 	}else{
 		fscanf(proc_file, "%d", &pid);
